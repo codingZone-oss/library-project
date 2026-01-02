@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QToolButton
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
+import webbrowser
 
 import sys
 
@@ -26,6 +27,7 @@ class LoginWindow(QMainWindow):
         self.main_layout = QHBoxLayout()
         self.central_widget.setLayout(self.main_layout)
         # self.layout.setAlignment(Qt.AlignCenter)
+        
 
         # adding the first layout to the main layout
         self.rigth_container = QWidget()
@@ -39,6 +41,22 @@ class LoginWindow(QMainWindow):
         self.layout_left = QVBoxLayout(self.left_container)
         self.layout_left.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.layout_left.setSpacing(20)  # setting spacing between widgets | definindo espaçamento entre widgets
+
+        # ___________
+
+        # adding title label to the layout on the rigth side | adicionando rótulo de título ao layout do lado direito
+        self.label_title = QLabel("Login to Your Account")
+        self.layout_left.addWidget(self.label_title, alignment=Qt.AlignCenter)
+        self.label_title.setContentsMargins(80, 0, 0, 0)  # adding bottom margin | adicionando margem inferior
+        self.label_title.setFixedSize(400, 40) # setting a fixed size | definindo um tamanho fixo
+        # setting the label_title costumizations | definindo as personalizações do label_title
+        self.label_title.setStyleSheet("""
+                QLabel{
+                    color: black;
+                    font-weight: bold;
+                    font-size: 25px;
+                    }
+                """)
 
         # ___________
 
@@ -142,7 +160,7 @@ class LoginWindow(QMainWindow):
 
         # building the password view toggle button | construindo o botão de alternância de exibição de senha
         self.button_toggle_password = QToolButton(self.input_password)
-        self.button_toggle_password.setIcon(QIcon("icons/eye_open20px.png"))
+        self.button_toggle_password.setIcon(QIcon("icons/fechar-o-olho.png"))
         self.button_toggle_password.setCursor(Qt.PointingHandCursor)
         self.button_toggle_password.setStyleSheet("border: none;")
         # self.button_toggle_password.setFixedSize(20, 20) # this isent necessary
@@ -168,7 +186,7 @@ class LoginWindow(QMainWindow):
         self.button_login.setShortcut("Return")  # setting a shortcut key | definindo uma tecla de atalho
         self.button_login.setContentsMargins(0, 0, 0, 40)  # adding top margin | adicionando margem superior
 
-        # # setting the login button costumizations | definindo as personalizações do botão de login
+        # setting the login button costumizations | definindo as personalizações do botão de login
 
         self.button_login.setStyleSheet("""
                 QPushButton {
@@ -187,6 +205,56 @@ class LoginWindow(QMainWindow):
 
         # ___________
 
+        # adding a spacer at the bottom to push the widgets upwards | adicionando um espaçador na parte inferior para empurrar os widgets para cima
+        # self.layout_left.addStretch(1.5)
+
+        # adding icon label of social networking
+        
+        # icon Facebook
+        self.icon_facebook = QLabel()
+        self.icon_facebook.mousePressEvent = lambda event: self.link_networking("https://www.facebook.com/")
+        self.icon_facebook.setPixmap(QIcon("icons/facebook_sem_cor.png").pixmap(30, 30))
+        self.icon_facebook.setCursor(Qt.PointingHandCursor)
+        self.icon_facebook.setToolTip("Click to Access Facebook")
+
+        # icon Twitter
+        self.icon_twitter = QLabel()
+        self.icon_twitter.mousePressEvent = lambda event: self.link_networking("https://www.x.com/")
+        self.icon_twitter.setPixmap(QIcon("icons/twitter_sem_cor.png").pixmap(30, 30))
+        self.icon_twitter.setCursor(Qt.PointingHandCursor)
+        self.icon_twitter.setToolTip("Click to Access Twitter")
+
+
+        # icon Instagram
+        self.icon_instagram = QLabel()
+        self.icon_instagram.mousePressEvent = lambda event: self.link_networking("https://www.instagram.com/")
+        self.icon_instagram.setPixmap(QIcon("icons/instagram_sem_cor.png").pixmap(30, 30))
+        self.icon_instagram.setCursor(Qt.PointingHandCursor)
+        self.icon_instagram.setToolTip("Click to Access Instagram")
+
+        # icon YouTube
+        self.icon_youtube = QLabel()
+        self.icon_youtube.mousePressEvent = lambda event: self.link_networking("https://www.youtube.com/")
+        self.icon_youtube.setPixmap(QIcon("icons/youtube_sem_cor.png").pixmap(30, 30))
+        self.icon_youtube.setCursor(Qt.PointingHandCursor)
+        self.icon_youtube.setToolTip("Click to Access You Tube")
+        # self.icon_youtube.
+
+
+
+        # adding a horizontal layout to put network links | adicionando um layout horizontal para colocar links de rede
+        self.links_layout = QHBoxLayout()
+        self.layout_left.addLayout(self.links_layout)
+        self.links_layout.setContentsMargins(70, 0, 0, 0)  # adding left margin | adicionando margem esquerda
+        self.links_layout.setSpacing(5)  # setting spacing between links | definindo espaçamento entre links
+        self.links_layout.addWidget(self.icon_facebook)
+        self.links_layout.addWidget(self.icon_twitter)
+        self.links_layout.addWidget(self.icon_instagram)
+        self.links_layout.addWidget(self.icon_youtube)
+
+
+        # ___________
+
         # adding both layouts to the main layout | adicionando ambos os layouts ao layout principal
         self.main_layout.addWidget(self.rigth_container)
         self.main_layout.addWidget(self.left_container)
@@ -196,17 +264,19 @@ class LoginWindow(QMainWindow):
         self.main_layout.setStretch(1, 2)  # Left side
 
         # ___________
-    
 
-    def toggle_button(self):
+    def link_networking(self, text) -> None:
+        webbrowser.open(text)
+
+    def toggle_button(self) -> None:
         if self.input_password.echoMode() == QLineEdit.Password:
             self.input_password.setEchoMode(QLineEdit.Normal)
             self.button_toggle_password.setIcon(QIcon("icons/eye_open20px.png"))
         else:
             self.input_password.setEchoMode(QLineEdit.Password)
-            self.button_toggle_password.setIcon(QIcon("icons/eyelashes_close_3d_20px.png"))
+            self.button_toggle_password.setIcon(QIcon("icons/fechar-o-olho.png"))
 
-    def handle_login(self):
+    def handle_login(self) -> None:
         username = self.input_username.text()
         password = self.input_password.text()
 
