@@ -145,7 +145,7 @@ class LoginWindow(QMainWindow):
         self.button_toggle_password.setIcon(QIcon("icons/eye_open20px.png"))
         self.button_toggle_password.setCursor(Qt.PointingHandCursor)
         self.button_toggle_password.setStyleSheet("border: none;")
-        self.button_toggle_password.setFixedSize(20, 20) # this isent necessary
+        # self.button_toggle_password.setFixedSize(20, 20) # this isent necessary
 
         # setting the button_toggle_password Direction
 
@@ -204,7 +204,7 @@ class LoginWindow(QMainWindow):
             self.button_toggle_password.setIcon(QIcon("icons/eye_open20px.png"))
         else:
             self.input_password.setEchoMode(QLineEdit.Password)
-            self.button_toggle_password.setIcon(QIcon("icons/eye_close_20px.png"))
+            self.button_toggle_password.setIcon(QIcon("icons/eyelashes_close_3d_20px.png"))
 
     def handle_login(self):
         username = self.input_username.text()
