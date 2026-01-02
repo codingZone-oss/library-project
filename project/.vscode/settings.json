@@ -1,0 +1,7 @@
+{
+    "editor.suggest.showStatusBar": true,
+    "python.createEnvironment.contentButton": "show",
+    "notebook.consolidatedRunButton": true,
+    "testing.followRunningTest": true,
+    "debugpy.showPythonInlineValues": true
+}
