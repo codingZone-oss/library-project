@@ -1,9 +1,35 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QToolButton
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QImage
 import webbrowser
 
 import sys
+
+class HoverLabel(QLabel):
+
+    def __init__(self, hover_icon, nomal_icon, num, link):
+        super().__init__()
+        self.hover_pixmap = hover_icon
+        self.normal_pixmap = nomal_icon
+        self.num_size = num
+        self.link = link
+
+        self.setPixmap(QIcon(self.normal_pixmap).pixmap(self.num_size, self.num_size))
+
+
+    def leaveEvent(self, event):
+        self.setPixmap(QIcon(self.normal_pixmap).pixmap(self.num_size, self.num_size))
+        super().leaveEvent(event)
+
+    def enterEvent(self, event):
+        self.setPixmap(QIcon(self.hover_pixmap).pixmap(self.num_size, self.num_size))
+        super().enterEvent(event)
+
+    def mousePressEvent(self, event) -> None:
+        if event.button() == Qt.LeftButton:
+            webbrowser.open(self.link)
+        super().mousePressEvent(event)
+    
 
 class LoginWindow(QMainWindow):
     def __init__(self):
@@ -30,10 +56,44 @@ class LoginWindow(QMainWindow):
         
 
         # adding the first layout to the main layout
-        self.rigth_container = QWidget()
-        self.rigth_container.setStyleSheet("background-color: blue;")
-        self.layout_rigth = QVBoxLayout(self.rigth_container)
-        self.layout_rigth.setAlignment(Qt.AlignCenter)
+        self.right_container = QWidget()
+        self.right_container.setStyleSheet("background-color: blue;")
+        self.layout_right = QVBoxLayout(self.right_container)
+        self.layout_right.setAlignment(Qt.AlignCenter)
+
+        # ___________
+
+        # adding title label to the layout on the left side | adicionando rótulo de título ao layout do lado esquerdo
+        
+        self.label_title2 = QLabel("Libary System")
+        self.layout_right.addWidget(self.label_title2, alignment=Qt.AlignCenter)
+        self.label_title2.setContentsMargins(80, 0, 0, 0)  # adding bottom margin | adicionando margem inferior
+        self.label_title2.setFixedSize(400, 85) # setting a fixed size | definindo um tamanho fixo
+        # setting the label_title costumizations | definindo as personalizações do label_title
+        self.label_title2.setStyleSheet("""
+                QLabel{
+                    color: white;
+                    font-weight: bold;
+                    font-size: 38px;
+                    padding-top: 30px;
+                    }
+                """)
+        self.layout_right.addStretch()
+
+        # ____________
+
+        # adding image book label to the left side layout | adicionando imagem de um livors ao layout do lado esquerdo
+
+        self.image_book = QLabel()
+        self.image_book.setPixmap(QIcon("imagens/book.png").pixmap(200, 200))
+        self.layout_right.addWidget(self.image_book, alignment=Qt.AlignCenter)
+
+        # ____________
+
+        self.layout_right.addStretch()
+        self.layout_right.addStretch()
+        self.layout_right.addStretch()
+        self.layout_right.addStretch()
 
         # adding the second layout to the central widget on the left side | adicionando o primeiro layout ao widget central no lado esquerdo
         self.left_container = QWidget()
@@ -43,6 +103,8 @@ class LoginWindow(QMainWindow):
         self.layout_left.setSpacing(20)  # setting spacing between widgets | definindo espaçamento entre widgets
 
         # ___________
+
+        self.layout_left.addStretch()
 
         # adding title label to the layout on the rigth side | adicionando rótulo de título ao layout do lado direito
         self.label_title = QLabel("Login to Your Account")
@@ -59,6 +121,9 @@ class LoginWindow(QMainWindow):
                 """)
 
         # ___________
+
+        self.layout_left.addStretch()
+        self.layout_left.addStretch()
 
         # adding user name lable widgets to the layout on the rigth side | adicionando o rótulo de nome de usuário aos widgets do layout no lado direito
         self.label_username = QLabel("User Name:")
@@ -206,40 +271,41 @@ class LoginWindow(QMainWindow):
         # ___________
 
         # adding a spacer at the bottom to push the widgets upwards | adicionando um espaçador na parte inferior para empurrar os widgets para cima
-        # self.layout_left.addStretch(1.5)
+        self.layout_left.addStretch()
 
         # adding icon label of social networking
         
         # icon Facebook
         self.icon_facebook = QLabel()
-        self.icon_facebook.mousePressEvent = lambda event: self.link_networking("https://www.facebook.com/")
-        self.icon_facebook.setPixmap(QIcon("icons/facebook_sem_cor.png").pixmap(30, 30))
+        self.icon_facebook = HoverLabel("icons/facebook_cor.png", "icons/facebook_sem_cor.png", 30, "https://www.facebook.com/")
         self.icon_facebook.setCursor(Qt.PointingHandCursor)
         self.icon_facebook.setToolTip("Click to Access Facebook")
 
         # icon Twitter
         self.icon_twitter = QLabel()
-        self.icon_twitter.mousePressEvent = lambda event: self.link_networking("https://www.x.com/")
-        self.icon_twitter.setPixmap(QIcon("icons/twitter_sem_cor.png").pixmap(30, 30))
+        self.icon_twitter = HoverLabel("icons/twitter_cor.png", "icons/twitter_sem_cor.png", 30, "https://www.x.com/")
         self.icon_twitter.setCursor(Qt.PointingHandCursor)
         self.icon_twitter.setToolTip("Click to Access Twitter")
 
 
         # icon Instagram
         self.icon_instagram = QLabel()
-        self.icon_instagram.mousePressEvent = lambda event: self.link_networking("https://www.instagram.com/")
-        self.icon_instagram.setPixmap(QIcon("icons/instagram_sem_cor.png").pixmap(30, 30))
+        self.icon_instagram = HoverLabel("icons/instagram_cor.png", "icons/instagram_sem_cor.png", 30, "https://www.instagram.com/")
         self.icon_instagram.setCursor(Qt.PointingHandCursor)
         self.icon_instagram.setToolTip("Click to Access Instagram")
 
         # icon YouTube
         self.icon_youtube = QLabel()
-        self.icon_youtube.mousePressEvent = lambda event: self.link_networking("https://www.youtube.com/")
-        self.icon_youtube.setPixmap(QIcon("icons/youtube_sem_cor.png").pixmap(30, 30))
+        self.icon_youtube = HoverLabel("icons/youtube_cor.png", "icons/youtube_sem_cor.png", 40, "https://www.youtube.com/")
         self.icon_youtube.setCursor(Qt.PointingHandCursor)
         self.icon_youtube.setToolTip("Click to Access You Tube")
         # self.icon_youtube.
 
+        # icon Linkedin
+        self.icon_linkedin = QLabel()
+        self.icon_linkedin = HoverLabel("icons/linkedin_cor.png", "icons/linkedin_sem_cor.png", 35, "https://www.linkedin.com/")
+        self.icon_linkedin.setCursor(Qt.PointingHandCursor)
+        self.icon_linkedin.setToolTip("Click to Access LinkedIn")
 
 
         # adding a horizontal layout to put network links | adicionando um layout horizontal para colocar links de rede
@@ -251,12 +317,13 @@ class LoginWindow(QMainWindow):
         self.links_layout.addWidget(self.icon_twitter)
         self.links_layout.addWidget(self.icon_instagram)
         self.links_layout.addWidget(self.icon_youtube)
+        self.links_layout.addWidget(self.icon_linkedin)
 
 
         # ___________
 
         # adding both layouts to the main layout | adicionando ambos os layouts ao layout principal
-        self.main_layout.addWidget(self.rigth_container)
+        self.main_layout.addWidget(self.right_container)
         self.main_layout.addWidget(self.left_container)
 
         # setting equal proportions for both sides | definindo proporções iguais para ambos os lados
@@ -264,9 +331,6 @@ class LoginWindow(QMainWindow):
         self.main_layout.setStretch(1, 2)  # Left side
 
         # ___________
-
-    def link_networking(self, text) -> None:
-        webbrowser.open(text)
 
     def toggle_button(self) -> None:
         if self.input_password.echoMode() == QLineEdit.Password:
