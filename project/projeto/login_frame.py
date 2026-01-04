@@ -349,7 +349,7 @@ class LoginWindow(QMainWindow):
             QMessageBox.information(self, "Login Successful", "Welcome, admin!")
         else:
             warning = Alert()
-            # warning.warning_label.setText("Invalid username or password!")
+            warning.warning_label.setText("Invalid username or password!")
             warning.show()
             
 

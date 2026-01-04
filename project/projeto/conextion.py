@@ -1,5 +1,4 @@
 import mysql.connector
-
 class ToConect:
 
     def conect() -> None:

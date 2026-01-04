@@ -4,7 +4,6 @@ from PySide6.QtGui import QIcon
 import sys
 
 
-
 class Alert(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -36,7 +35,6 @@ class Alert(QMainWindow):
                 color: black;
                 padding: 8px 16px;
                 border: none;
-                border-radius: 5px;
                 font-size: 14px;
             }
             QPushButton:hover {
