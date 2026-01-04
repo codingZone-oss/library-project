@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QToolButton
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon, QImage
+from PySide6.QtGui import QIcon
+from warning_frame import Alert
 import webbrowser
 
 import sys
@@ -36,7 +37,9 @@ class LoginWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Login Frame")
+        self.setWindowFlags(Qt.FramelessWindowHint)
         self.setFixedSize(900, 500)
+        # self.setStyleSheet("border-radius: 10px;")
 
         # ___________
 
@@ -51,9 +54,7 @@ class LoginWindow(QMainWindow):
 
         # adding main layout to the central widget (horizontal) | adicionando layout principal ao widget central
         self.main_layout = QHBoxLayout()
-        self.central_widget.setLayout(self.main_layout)
-        # self.layout.setAlignment(Qt.AlignCenter)
-        
+        self.central_widget.setLayout(self.main_layout)        
 
         # adding the first layout to the main layout
         self.right_container = QWidget()
@@ -347,7 +348,10 @@ class LoginWindow(QMainWindow):
         if username == "admin" and password == "password":
             QMessageBox.information(self, "Login Successful", "Welcome, admin!")
         else:
-            QMessageBox.warning(self, "Login Failed", "Invalid username or password.")
+            warning = Alert()
+            # warning.warning_label.setText("Invalid username or password!")
+            warning.show()
+            
 
 app = QApplication(sys.argv)
 window = LoginWindow()
