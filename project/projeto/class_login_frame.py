@@ -1,9 +1,11 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QToolButton
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QToolButton
+from classs_warning_frame import Alert, Successefull
+from class_main_frame import MainFrame
+from PySide6.QtCore import Qt, QTimer
+from class_conextion import cursor
 from PySide6.QtGui import QIcon
-from warning_frame import Alert
+from time import sleep
 import webbrowser
-
 import sys
 
 class HoverLabel(QLabel):
@@ -33,23 +35,23 @@ class HoverLabel(QLabel):
     
 
 class LoginWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         self.setWindowTitle("Login Frame")
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setFixedSize(900, 500)
-        # self.setStyleSheet("border-radius: 10px;")
 
         # ___________
 
         # adding central widget to the main window | adicionado widget central à janela principal
         self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
+        self.setCentralWidget(self.central_widget)    
 
         # setting the central widget costumizations | definindo as personalizações do widget central
-        self.central_widget.setStyleSheet("background-color: white;")
-
+        self.central_widget.setObjectName("central_widget") # id
+        self.central_widget.setStyleSheet(""" QWidget#central_widget{background-color: white; border-radius: 18px;}""")
+        
         # ___________
 
         # adding main layout to the central widget (horizontal) | adicionando layout principal ao widget central
@@ -58,7 +60,8 @@ class LoginWindow(QMainWindow):
 
         # adding the first layout to the main layout
         self.right_container = QWidget()
-        self.right_container.setStyleSheet("background-color: blue;")
+        self.right_container.setObjectName("right_container")
+        self.right_container.setStyleSheet("""QWidget#right_container{background-color: blue; border-radius: 18px;}""")
         self.layout_right = QVBoxLayout(self.right_container)
         self.layout_right.setAlignment(Qt.AlignCenter)
 
@@ -71,14 +74,8 @@ class LoginWindow(QMainWindow):
         self.label_title2.setContentsMargins(80, 0, 0, 0)  # adding bottom margin | adicionando margem inferior
         self.label_title2.setFixedSize(400, 85) # setting a fixed size | definindo um tamanho fixo
         # setting the label_title costumizations | definindo as personalizações do label_title
-        self.label_title2.setStyleSheet("""
-                QLabel{
-                    color: white;
-                    font-weight: bold;
-                    font-size: 38px;
-                    padding-top: 30px;
-                    }
-                """)
+        self.label_title2.setStyleSheet("""QLabel{ color: white; font-weight: bold; font-size: 38px; padding-top: 30px;}""")
+
         self.layout_right.addStretch()
 
         # ____________
@@ -102,6 +99,16 @@ class LoginWindow(QMainWindow):
         self.layout_left = QVBoxLayout(self.left_container)
         self.layout_left.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.layout_left.setSpacing(20)  # setting spacing between widgets | definindo espaçamento entre widgets
+
+        # ___________
+        # adding close button to the layout on the rigth side | adicionando botão de fechar ao layout do lado direito
+
+        self.close_button = QPushButton("X")
+        self.close_button.setFixedSize(35, 20)
+        self.close_button.setCursor(Qt.PointingHandCursor)
+        self.close_button.setStyleSheet("""QPushButton {background-color: lightgray; color: white; font-weight: bold; border: none; border-radius: 10px;} QPushButton:hover { background-color: red; color: white;}""")
+        self.close_button.clicked.connect(self.close)
+        self.layout_left.addWidget(self.close_button, alignment=Qt.AlignRight)
 
         # ___________
 
@@ -245,12 +252,12 @@ class LoginWindow(QMainWindow):
         # adding login button to the layout on the rigth side | adicionando botão de login ao layout do lado direito
         self.button_login = QPushButton("Login")
         self.button_login.clicked.connect(self.handle_login)
-        self.layout_left.addWidget(self.button_login, alignment=Qt.AlignCenter)
         self.button_login.setFixedSize(100, 30)
         self.button_login.setCursor(Qt.PointingHandCursor) # setting the cursor aparences to hand pointing 
         self.button_login.setToolTip("Click to login")  # setting a tooltip | definindo uma dica de ferramenta
         self.button_login.setShortcut("Return")  # setting a shortcut key | definindo uma tecla de atalho
         self.button_login.setContentsMargins(0, 0, 0, 40)  # adding top margin | adicionando margem superior
+        self.layout_left.addWidget(self.button_login, alignment=Qt.AlignCenter)
 
         # setting the login button costumizations | definindo as personalizações do botão de login
 
@@ -277,7 +284,7 @@ class LoginWindow(QMainWindow):
         # adding icon label of social networking
         
         # icon Facebook
-        self.icon_facebook = QLabel()
+        # self.icon_facebook = QLabel()
         self.icon_facebook = HoverLabel("icons/facebook_cor.png", "icons/facebook_sem_cor.png", 30, "https://www.facebook.com/")
         self.icon_facebook.setCursor(Qt.PointingHandCursor)
         self.icon_facebook.setToolTip("Click to Access Facebook")
@@ -333,7 +340,7 @@ class LoginWindow(QMainWindow):
 
         # ___________
 
-    def toggle_button(self) -> None:
+    def toggle_button(self) -> None: # this one is used to make changes of the eye icon on input_password label
         if self.input_password.echoMode() == QLineEdit.Password:
             self.input_password.setEchoMode(QLineEdit.Normal)
             self.button_toggle_password.setIcon(QIcon("icons/eye_open20px.png"))
@@ -341,17 +348,32 @@ class LoginWindow(QMainWindow):
             self.input_password.setEchoMode(QLineEdit.Password)
             self.button_toggle_password.setIcon(QIcon("icons/fechar-o-olho.png"))
 
-    def handle_login(self) -> None:
+    def handle_DB(self) -> list: # this one is used to make SLQ querys on BD 
+        vet = list()
+        try: cursor.execute("select user_name, pass_word from user")
+        except Exception as e: print(f'Something went worng {e}')
+        for line in cursor: vet.append(line)
+        return vet
+
+    def open(self) -> None: # this methods close the login frame and also open the main window frame
+        self.close()
+        self.main = MainFrame()
+        self.main.show()
+
+
+    def handle_login(self) -> None: # this one take care about login handle 
         username = self.input_username.text()
         password = self.input_password.text()
-
-        if username == "admin" and password == "password":
-            QMessageBox.information(self, "Login Successful", "Welcome, admin!")
-        else:
-            warning = Alert()
-            warning.warning_label.setText("Invalid username or password!")
-            warning.show()
-            
+        users = self.handle_DB()
+        for user in users:
+            if username == user[0] and password == user[1]:
+                sleep(1)
+                self.success = Successefull("Admin: Fulano de Tal")
+                self.success.show()
+                self.timer = QTimer()
+                self.timer.singleShot(4000, self.open)
+                return
+        self.alert = Alert(); sleep(0.6); self.alert.show()
 
 app = QApplication(sys.argv)
 window = LoginWindow()
