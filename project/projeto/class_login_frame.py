@@ -1,6 +1,5 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QToolButton
 from classs_warning_frame import Alert, Successefull
-from class_main_frame import MainFrame
 from PySide6.QtCore import Qt, QTimer
 from class_conextion import cursor
 from PySide6.QtGui import QIcon
@@ -35,8 +34,9 @@ class HoverLabel(QLabel):
     
 
 class LoginWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, controller) -> None:
+        super().__init__()
+        self.controller = controller
 
         self.setWindowTitle("Login Frame")
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -73,6 +73,7 @@ class LoginWindow(QMainWindow):
         self.layout_right.addWidget(self.label_title2, alignment=Qt.AlignCenter)
         self.label_title2.setContentsMargins(80, 0, 0, 0)  # adding bottom margin | adicionando margem inferior
         self.label_title2.setFixedSize(400, 85) # setting a fixed size | definindo um tamanho fixo
+        
         # setting the label_title costumizations | definindo as personalizações do label_title
         self.label_title2.setStyleSheet("""QLabel{ color: white; font-weight: bold; font-size: 38px; padding-top: 30px;}""")
 
@@ -85,6 +86,7 @@ class LoginWindow(QMainWindow):
         self.image_book = QLabel()
         self.image_book.setPixmap(QIcon("imagens/book.png").pixmap(200, 200))
         self.layout_right.addWidget(self.image_book, alignment=Qt.AlignCenter)
+        self.image_book.setScaledContents(True)
 
         # ____________
 
@@ -141,13 +143,7 @@ class LoginWindow(QMainWindow):
 
 
         # setting the label_usernames costumizations | definindo as personalizações do label_username
-        self.label_username.setStyleSheet("""
-                QLabel{
-                    color: black;
-                    font-weight: normal;
-                    font-size: 16px;
-                    }        
-                """)
+        self.label_username.setStyleSheet(" QLabel { color: black; font-weight: normal; font-size: 16px; } ")
         
         # ___________
 
@@ -155,7 +151,6 @@ class LoginWindow(QMainWindow):
         self.input_username = QLineEdit()
         self.input_username.setFixedSize(260, 25)
         self.input_username.setPlaceholderText("Enter your username")
-        # self.layout_left.addWidget(self.input_username, alignment=Qt.AlignCenter)
 
         
         # setting the input_usernames field costumizations | definindo as personalizações do campo input_username
@@ -356,10 +351,7 @@ class LoginWindow(QMainWindow):
         return vet
 
     def open(self) -> None: # this methods close the login frame and also open the main window frame
-        self.close()
-        self.main = MainFrame()
-        self.main.show()
-
+        self.controller.show_main()
 
     def handle_login(self) -> None: # this one take care about login handle 
         username = self.input_username.text()
@@ -374,8 +366,3 @@ class LoginWindow(QMainWindow):
                 self.timer.singleShot(4000, self.open)
                 return
         self.alert = Alert(); sleep(0.6); self.alert.show()
-
-app = QApplication(sys.argv)
-window = LoginWindow()
-window.show()
-app.exec()
