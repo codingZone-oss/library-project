@@ -97,7 +97,7 @@ class Successefull(QMainWindow):
 
 
         self.label_title = QLabel()
-        self.label_title.setText("WellCome")
+        self.label_title.setText(text1)
         self.label_title.setObjectName("tester")
         self.label_title.setStyleSheet(" #tester { background-color: green; color: white; font-size: 27px; border-radius: 50px; font-weight: bold;}")
         self.top_layout.addWidget(self.label_title, alignment=Qt.AlignRight)
@@ -118,7 +118,7 @@ class Successefull(QMainWindow):
         self.midle_widget.setStyleSheet(""" QWidget { background-color: green; border-radius: 10px; }""")
 
         self.midle_label = QLabel()
-        self.midle_label.setText(text1)
+        # self.midle_label.setText(text1)
         self.midle_label.setObjectName("tester")
         self.midle_label.setStyleSheet(" #tester { background-color: green; color: white; font-size: 12px; border-radius: 5px; font-weight: bold;}")
         self.midle_layout.addWidget(self.midle_label, alignment=Qt.AlignCenter)

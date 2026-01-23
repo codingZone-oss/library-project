@@ -360,7 +360,7 @@ class LoginWindow(QMainWindow):
         for user in users:
             if username == user[0] and password == user[1]:
                 sleep(1)
-                self.success = Successefull("Admin: Fulano de Tal")
+                self.success = Successefull("WellCome")
                 self.success.show()
                 self.timer = QTimer()
                 self.timer.singleShot(4000, self.open)

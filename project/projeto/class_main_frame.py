@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QToolButton, QSizePolicy, QGraphicsDropShadowEffect,  QStackedWidget, QTableView
 from PySide6.QtSql import QSqlTableModel
+from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtGui import QColor
 from classs_warning_frame import Alert, Successefull
 from PySide6.QtGui import QIcon
@@ -12,7 +13,7 @@ class MainFrame(QMainWindow):
     def __init__(self, controller) -> None:
         super().__init__()
 
-        self.controller = controller
+        # self.controller = controller
 
         # Home
         self.setWindowState(Qt.WindowMaximized)
@@ -292,7 +293,8 @@ class MainFrame(QMainWindow):
 
         self.head_lyt.addStretch()
         self.head_lyt.addWidget(self.labels("Book Title"), alignment=Qt.AlignTop)
-        self.head_lyt.addWidget(self.texts("Insert the Book Title"), alignment=Qt.AlignTop)
+        self.txt_title = self.texts("Insert the Book Title")
+        self.head_lyt.addWidget(self.txt_title, alignment=Qt.AlignTop)
 
 
         # adding midle_wgt to main_wgt1
@@ -317,10 +319,15 @@ class MainFrame(QMainWindow):
         self.midle_wgt2.setStyleSheet(" #midle2 {background-color: rgb(7, 30, 71); border-radius: 10px; height: 50px; }")
         # self.shadow(self.midle_wgt2)
 
-        self.midle_lyt2.addWidget(self.texts("Insert the Stock Aumont", False), alignment=Qt.AlignTop)
-        self.midle_lyt2.addWidget(self.texts("Insert the Book Price", False), alignment=Qt.AlignTop)
-        self.midle_lyt2.addWidget(self.texts("Insert the Book Publication Year", False), alignment=Qt.AlignTop)
-        self.midle_lyt2.addStretch()
+        self.txt_publication_year = self.texts("Insert the Book Publication Year", False)
+        self.midle_lyt2.addWidget(self.txt_publication_year, alignment=Qt.AlignTop)
+
+        self.txt_price = self.texts("Insert the Book Price", False)
+        self.midle_lyt2.addWidget(self.txt_price, alignment=Qt.AlignTop)
+
+        self.txt_stock = self.texts("Insert the Stock Aumont", False)
+        self.midle_lyt2.addWidget(self.txt_stock, alignment=Qt.AlignTop)
+
         self.midle_lyt2.addStretch()
 
         # adding button_wgt2 to main_wgt1
@@ -333,7 +340,11 @@ class MainFrame(QMainWindow):
 
         # adding buttons on bottom_lyt
         self.button_lyt.addStretch()
-        self.button_lyt.addWidget(self.send_buttons("Add"), alignment=Qt.AlignRight)
+
+        self.btn_add = self.send_buttons("Add")
+        self.button_lyt.addWidget(self.btn_add, alignment=Qt.AlignRight)
+        self.btn_add.clicked.connect(self.add)
+
         self.button_lyt.addWidget(self.send_buttons("Update"), alignment=Qt.AlignRight)
         self.button_lyt.addWidget(self.send_buttons("Delete"), alignment=Qt.AlignRight)
 
@@ -357,28 +368,26 @@ class MainFrame(QMainWindow):
 
         self.search.setLayoutDirection(Qt.LeftToRight)
         self.search_icon.move(self.search.width() - 65, (self.search.height() - 15) // 2)
+        self.search_icon.clicked.connect(self.search_books)
 
 
         # adding table to bottom_wgt
 
         self.book_table = QTableView()
         self.bottom_lyt.addWidget(self.book_table)
-
-
-        # self.model.select()
-
-        # row = self.model.rowCount()
-        # self.model.insertRow(row)
-        # self.model.setData(self.model.index(row, 1), "Novo Nome")
-        # self.model.submitAll()
-
-
-        # index = self.table.currentIndex()
-        # self.model.removeRow(index.row())
-        # self.model.submitAll()
+        self.book_table.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.book_table.setStyleSheet(""" QTableView { background-color: rgb(16, 40, 83); border-radius: 5px; gridline-color: transparent; color: #ffffff; font-size: 13px; } QTableView::item { padding: 6px; } """)
 
 
 
+        self.model = QStandardItemModel()
+        self.model.setHorizontalHeaderLabels(["ID", "Title", "Year of Publication", "Price", "Aumont of Stock"])
+        self.book_table.setModel(self.model)
+        self.book_table.setSelectionBehavior(QTableView.SelectRows)
+        self.book_table.setSelectionMode(QTableView.SingleSelection)
+        self.book_table.clicked.connect(self.row_clicked)
+
+        self.model.removeRows(0, self.model.rowCount())
 
         # adding all the QWidget on the main_layout1
 
@@ -616,20 +625,39 @@ class MainFrame(QMainWindow):
 
         self.table.setStyleSheet(" QTableView { border: none; background-color: #1e1e1e; } QHeaderView::section { background-color: #2d2d2d; border: none; padding: 6px; } ")
 
+    def search_books(self) -> None:
+        search_text = self.search.text()
+        cursor.execute(' SELECT id, titulo, ano_publicacao, preco, estoque FROM livros WHERE titulo LIKE %s', (f"%{search_text}%",) )
 
-    
-    def create_model(self):
-        self.model = QSqlTableModel(self)
-        self.model.setTable("usuarios")
-        self.model.setEditStrategy(QSqlTableModel.OnManualSubmit)
-        self.model.select()
+        self.model.removeRows(0, self.model.rowCount())
 
-        self.model.setHeaderData(0, Qt.Horizontal, "ID")
-        self.model.setHeaderData(1, Qt.Horizontal, "Nome")
-        self.model.setHeaderData(2, Qt.Horizontal, "Email")
+        for row_data in cursor.fetchall():
+            row_items = []
+            for value in row_data:
+                item = QStandardItem(str(value))
+                item.setEditable(False)
+                row_items.append(item)
+
+            self.model.appendRow(row_items)
+
+    def row_clicked(self, index) -> None:
+        row = index.row()
+        self.txt_title.setText(self.model.item(row, 1).text())
+        self.txt_publication_year.setText(self.model.item(row, 2).text())
+        self.txt_price.setText(self.model.item(row, 3).text())
+        self.txt_stock.setText(self.model.item(row, 4).text())
 
 
-# app = QApplication(sys.argv)
-# window = MainFrame(None)
-# window.show()
-# app.exec()
+    def add(self) -> None:
+        from class_add_books import AddBook
+        added = AddBook()
+        ano = int(self.txt_publication_year)
+        preco = int(self.txt_price)
+        stock = int(self.txt_stock)
+        added.insert(self.txt_title, ano, preco, stock)
+
+
+app = QApplication(sys.argv)
+window = MainFrame(None)
+window.show()
+app.exec()
