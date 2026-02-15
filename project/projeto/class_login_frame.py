@@ -365,4 +365,4 @@ class LoginWindow(QMainWindow):
                 self.timer = QTimer()
                 self.timer.singleShot(4000, self.open)
                 return
-        self.alert = Alert(); sleep(0.6); self.alert.show()
+        self.alert = Alert("User Name or Pass Word Incorrect"); sleep(0.6); self.alert.show()

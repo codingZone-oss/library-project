@@ -6,7 +6,7 @@ import sys
 
 class Alert(QMainWindow):
 
-    def __init__(self, Bool:bool=False, parent=None) -> None:
+    def __init__(self, text, Bool:bool=False, parent=None) -> None:
         super().__init__()
 
         # home
@@ -30,7 +30,7 @@ class Alert(QMainWindow):
         self.top_widget.setStyleSheet(" QWidget { background-color: #ff0000b0; border-radius: 50px;}")
 
         self.label_title = QLabel()
-        self.label_title.setText("User Name or Pass Word Incorrect")
+        self.label_title.setText(text)
         self.label_title.setObjectName("tester")
         self.label_title.setStyleSheet(" #tester { background-color: #ff0000b0; color: white; font-size: 19px; border-radius: 50px; font-weight: bold;}")
         self.top_layout.addWidget(self.label_title, alignment=Qt.AlignRight)
