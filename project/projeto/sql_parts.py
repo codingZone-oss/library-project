@@ -34,10 +34,10 @@ class SqlParts():
 
 class AddBook():
 
-    def insert(self, title, year, price, stock) -> None:
+    def insert(self, title, year, author, price, stock, isbn, publisher, category, nationality, description) -> None:
         try:
-            query = """ INSERT INTO livros (titulo, ano_publicacao, id_autor, id_editora, id_categoria, preco, estoque) VALUES (%s, %s, DEFAULT, DEFAULT, DEFAULT, %s, %s ) """
-            cursor.execute(query, (title, year, price, stock))
+            query = """ INSERT INTO livros (titulo, ano_publicacao, autor, preco, estoque, ISBN, editora, categoria, nacionalidade, descricao) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+            cursor.execute(query, (title, year, author, price, stock, isbn, publisher, category, nationality, description))
 
         except Exception as e:
             print("ERROR IN ADDING BOOKS:", e)

@@ -202,11 +202,7 @@ class LoginWindow(QMainWindow):
 
 
         # setting the input_password field costumizations | definindo as personalizações do campo input_password
-        self.input_password.setStyleSheet("""
-            QLineEdit {
-                color: black;
-                }
-            """)
+        self.input_password.setStyleSheet(""" QLineEdit { color: black; } """)
         
         # ___________
 
