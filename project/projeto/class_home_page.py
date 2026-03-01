@@ -7,7 +7,7 @@ from sql_parts import SqlParts
 class Home:
 
     def __init__(self):
-        pass
+       pass
 
     def home_page(self) -> QWidget:
 

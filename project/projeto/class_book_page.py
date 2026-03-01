@@ -2,24 +2,25 @@ from time import sleep
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy, QGraphicsDropShadowEffect, QTableView, QToolButton, QLineEdit, QPushButton, QSpinBox, QComboBox
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QIntValidator, QRegularExpressionValidator
 from classs_warning_frame import Alert, Successefull
-from sql_parts import AddBook
+from PySide6.QtCore import Qt, QRegularExpression
 from class_conextion import cursor
 from PySide6.QtGui import QColor
-from PySide6.QtCore import Qt, QRegularExpression
-from sql_parts import SqlParts
 from PySide6.QtGui import QIcon
+from class_home_page import Home
+from sql_parts import SqlParts
+from sql_parts import AddBook
 from datetime import date
 
 
 
-class Book:
+
+class Book(Home):
 
     def __init__(self):
-        pass
+        super().__init__()
 
     def book_page(self) -> QWidget:
 
-        self.sql = SqlParts("") 
 
         # creating a book page
 
@@ -198,7 +199,7 @@ class Book:
         self.right_wgt6.setStyleSheet(" #bottom_wgt6 {background-color: rgb(7, 30, 71);; border-radius: 10px; height: 50px; }")
 
         self.right_lyt6.addWidget(self.labels("ISBN"), alignment=Qt.AlignTop)
-        self.txt_isnb = self.texts("xxxx-xxxx-xxx-xx")
+        self.txt_isnb = self.texts("xxxx-xxxx-xxx-xx", integer=True, limit=14)
         self.right_lyt6.addWidget(self.txt_isnb, alignment=Qt.AlignTop)
 
         self.midle_lyt2.addWidget(self.right_wgt6)
@@ -235,10 +236,16 @@ class Book:
         self.btn_clean = self.send_buttons("Clean")
         self.btn_clean.clicked.connect(self.clean_filds)
 
+        self.btn_update = self.send_buttons("Update")
+        self.btn_update.clicked.connect(self.updating_books)
+
+        self.btn_delete = self.send_buttons("Delete")
+        self.btn_delete.clicked.connect(self.deleting_books)
+
         self.button_lyt.addWidget(self.btn_clean, alignment=Qt.AlignRight)
         self.button_lyt.addWidget(self.btn_add, alignment=Qt.AlignRight)
-        self.button_lyt.addWidget(self.send_buttons("Update"), alignment=Qt.AlignRight)
-        self.button_lyt.addWidget(self.send_buttons("Delete"), alignment=Qt.AlignRight)
+        self.button_lyt.addWidget(self.btn_update, alignment=Qt.AlignRight)
+        self.button_lyt.addWidget(self.btn_delete, alignment=Qt.AlignRight)
 
 
         # adding bottom_wgt to main_wgt1
@@ -250,18 +257,18 @@ class Book:
         self.bottom_wgt.setStyleSheet(" #bottom {background-color: rgb(7, 30, 71);; border-radius: 10px; height: 50px; }")
         self.shadow(self.bottom_wgt)
 
-        self.search = self.texts("Search Books", value=False)
-        self.bottom_lyt.addWidget(self.search, alignment=Qt.AlignTop)
+        self.txt_search = self.texts("Search Books", value=False)
+        self.bottom_lyt.addWidget(self.txt_search, alignment=Qt.AlignTop)
         
 
-        self.search_icon = QToolButton(self.search)
+        self.search_icon = QToolButton(self.txt_search)
         self.search_icon.setIcon(QIcon("icons/procurar.png"))
         self.search_icon.setCursor(Qt.PointingHandCursor)
         self.search_icon.setStyleSheet("border: none;")
         self.search_icon.setShortcut("Return")
 
-        self.search.setLayoutDirection(Qt.LeftToRight)
-        self.search_icon.move(self.search.width() - 65, (self.search.height() - 15) // 2)
+        self.txt_search.setLayoutDirection(Qt.LeftToRight)
+        self.search_icon.move(self.txt_search.width() - 65, (self.txt_search.height() - 15) // 2)
         self.search_icon.clicked.connect(self.search_books)
 
 
@@ -332,7 +339,14 @@ class Book:
         self.table.setStyleSheet(" QTableView { border: none; background-color: #1e1e1e; } QHeaderView::section { background-color: #2d2d2d; border: none; padding: 6px; } ")
 
     def search_books(self) -> None:
-        search_text = self.search.text()
+
+        while not self.txt_search.text():
+            self.warning = Alert("Fill The Search Field")
+            sleep(0.6)
+            self.warning.show()
+            return
+
+        search_text = self.txt_search.text()
         cursor.execute(' SELECT id, titulo, ano_publicacao, autor, preco, estoque, ISBN, editora, categoria, nacionalidade FROM livros WHERE titulo LIKE %s', (f"%{search_text}%",) )
 
         self.model.removeRows(0, self.model.rowCount())
@@ -418,30 +432,34 @@ class Book:
 
 
     def addig_books(self) -> None:
-        add = AddBook()
-        while not self.txt_title.text() or not self.txt_price.text() or self.spin_stock.value() == 0 or not self.txt_description.text() or not self.txt_nationality.text() or not self.txt_publisher.text() or not self.txt_isnb.text() or not self.txt_author.text():
-            self.warning = Alert("Fill All Fields")
-            sleep(0.6)
-            self.warning.show()
-            return
+        data = {
+        "title": self.txt_title.text(),
+        "year": self.spn_publication_year.value(),
+        "author": self.txt_author.text(),
+        "price": self.txt_price.text(),
+        "stock": self.spin_stock.value(),
+        "isbn": self.txt_isnb.text(),
+        "publisher": self.txt_publisher.text(),
+        "category": self.combo_category.currentText(),
+        "nationality": self.txt_nationality.text(),
+        "description": self.txt_description.text()}
 
-        self.title = self.txt_title.text()
-        self.ano = self.spn_publication_year.value()
-        self.autor = self.txt_author.text()
-        self.price = self.txt_price.text()
-        self.stock = self.spin_stock.value()
-        self.isbn = self.txt_isnb.text()
-        self.editora = self.txt_publisher.text()
-        self.categoria = self.combo_category.currentText()
-        self.nacionalidade = self.txt_nationality.text()
-        self.descricao = self.txt_description.text()
+        if not all(data.values()) or data["stock"] == 0:
+            self.alert = Alert("Fill All Fields");sleep(0.6);self.alert.show();return
+
+        AddBook().insert(*data.values())
+
+        self.successfull = Successefull("ADDED WITH SUCCESS");sleep(0.6);self.successfull.show();self.clean_filds()
+        self.label_book.setText(f"Added Books \n \n {self.sql.select_books()[0]}")
+        
 
 
-        add.insert(self.title, self.ano, self.autor, self.price, self.stock, self.isbn, self.editora, self.categoria, self.nacionalidade, self.descricao)
-        self.success = Successefull("ADDED WITH SUCCESS")
-        sleep(0.6)
-        self.clean_filds()
-        self.success.show()
+    def updating_books(self):
+        pass
+
+    def deleting_books(self):
+        pass
+
 
     def send_buttons(self, text) -> None:
         self.btn1 = QPushButton(text)
