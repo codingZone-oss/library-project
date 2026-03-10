@@ -36,7 +36,7 @@ class AddBook():
 
     def insert(self, title, year, author, price, stock, isbn, publisher, category, nationality, description) -> None:
         try:
-            query = """ INSERT INTO livros (titulo, ano_publicacao, autor, preco, estoque, ISBN, editora, categoria, nacionalidade, descricao) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+            query = """ INSERT INTO livros (titulo, ano_publicacao, autor, preco, estoque, ISBN, editora, categoria, nacionalidade, descricao) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
             cursor.execute(query, (title, year, author, price, stock, isbn, publisher, category, nationality, description))
 
         except Exception as e:
@@ -46,27 +46,25 @@ class AddBook():
             print("BOOKS ADDED WITH SUCCESS")
 
 
-class UpdateBooks():
+class UpdateBooks:
     
-    def update(self, cod:int, title:str, year:int, price:float, stock:int) -> None:
+    def update(self, cod:int, title, year, author, price, stock, isbn, publisher, category, nationality, description) -> str:
         try:
-            query = """UPDATE livros SET titulo = %s, ano_publicacao = %s, preco = %s, estoque = %s WHERE (id = %s);"""
-            cursor.execute(query, (title, year, price, stock, cod))
+            query = """ UPDATE livros SET titulo = %s, ano_publicacao = %s, autor = %s, preco = %s, estoque = %s, ISBN = %s, editora = %s, categoria = %s, nacionalidade = %s, descricao = %s WHERE id = %s;"""
+            cursor.execute(query, (title, year, author, price, stock, isbn, publisher, category, nationality, description, cod))
 
         except Exception as e:
-            print("ERROR IN UPDATING BOOKS:", e)
+            print("ERROR IN UPDATING BOOKS:", e);return False
         else:
-            print("BOOKS UPDATED WITH SUCCESS")
-
+            print("BOOKS UPDATED WITH SUCCESS");return True
 
 class DeleteBooks():
     
-    def delete(self, id:int):
+    def delete(self, id_books:int):
         try:
-            query = """DELETE FROM livros WHERE (id = %s);"""
-            cursor.execute(query, (id))
+            cursor.execute("DELETE FROM livros WHERE id = %s", (id_books,))
             
         except Exception as e:
-            print("ERROR IN DELETING BOOKS:", e)
+            print("ERROR IN DELETING BOOKS:", e);return False
         else:
-            print("BOOKS DELETED WITH SUCCESS")
+            print("BOOKS DELETED WITH SUCCESS");return True

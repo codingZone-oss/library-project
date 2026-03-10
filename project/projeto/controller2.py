@@ -7,5 +7,5 @@ class AppController2:
         self.book = Book(self)
         self.home = Home(self)
 
-    def __setstate__(self):
+    def __setstate__(self):pass
         

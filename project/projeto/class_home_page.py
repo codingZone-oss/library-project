@@ -118,3 +118,11 @@ class Home:
         shadow.setOffset(1, 0)
         shadow.setColor(QColor(0, 0, 0, 80))
         return widget.setGraphicsEffect(shadow)
+    
+    def __getstate__(self, value) -> QLabel:
+        if value == 1:
+            return self.label_book.setText(f"Added Books \n \n {self.sql.select_books()[0]}")
+        elif value == 2:
+            return self.label_worker.setText(f"Added Workers \n \n {self.sql.select_workers()[0]}")
+        elif value == 3:
+            return self.label_reader.setText(f"Added Readers \n \n {self.sql.select_readers()[0]}")

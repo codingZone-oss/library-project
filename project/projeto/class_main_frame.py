@@ -27,16 +27,10 @@ class MainFrame(QMainWindow):
         # sub Home
         self.main_widget = QWidget()
         self.setCentralWidget(self.main_widget)
-        self.setMaximumWidth(1920)
-        self.setMinimumWidth(1324)
-        self.setMaximumHeight(1080)
-        self.setMinimumHeight(600)
         self.setObjectName("class")
-        # self.setStyleSheet(" #class {background-color: black; } ")
         self.setStyleSheet(" #class {background-color: rgb(7, 30, 71); } ")
 
         #_________________________________
-
 
 
         # sub sub Home
@@ -103,7 +97,6 @@ class MainFrame(QMainWindow):
         self.main_right_wgt = QWidget()
         self.main_right_lyt = QVBoxLayout(self.main_right_wgt)
         self.main_right_wgt.setObjectName("right_wgt")
-        # self.main_right_wgt.setStyleSheet(" #right_wgt {background-color: pink; width: 70px; border-radius: 10px}")
         self.main_right_wgt.setStyleSheet(" #right_wgt {background-color: rgb(7, 30, 71); width: 70px; border-radius: 10px}")
 
 
@@ -116,27 +109,52 @@ class MainFrame(QMainWindow):
         self.top_widget.setStyleSheet(" #top {background-color: rgb(7, 30, 71); border-radius: 10px; }")
         self.shadow(self.top_widget)
 
-        # adding a label title to the top layout 
+        # adding a painel_left_wdt to the top_layout 
+
+        self.painel_left_wdt = QWidget()
+        self.painel_left_lyt = QVBoxLayout(self.painel_left_wdt, alignment=Qt.AlignCenter)
+        self.painel_left_wdt.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Preferred)
+        self.painel_left_wdt.setFixedHeight(40)
+        self.top_layout.addSpacing(60)
+        self.top_layout.addWidget(self.painel_left_wdt)
+        self.top_layout.setStretch(0, 20) 
+        self.top_layout.setContentsMargins(0, 0, 0, 40)
+        self.painel_left_wdt.setObjectName("painel_left_wdt")
+        self.painel_left_wdt.setStyleSheet(" #painel_left_wdt { background-color:  rgb(7, 30, 71); color: white; font-weight: bold; font-size: 24px; padding-bottom: 10px;} ")
+
+        # adding a painel_right_wdt to the top_layout 
+
+        self.painel_right_wdt = QWidget()
+        self.painel_right_lyt = QVBoxLayout(self.painel_right_wdt)
+        self.painel_right_wdt.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Preferred)
+        self.painel_right_wdt.setFixedHeight(40)
+        self.top_layout.addWidget(self.painel_right_wdt)
+        self.top_layout.setStretch(1, 1)
+        self.painel_right_wdt.setObjectName("painel_right_wdt")
+        self.painel_right_wdt.setStyleSheet(" #painel_right_wdt { background-color: rgb(7, 30, 71); color: white; font-weight: bold; font-size: 24px; padding-bottom: 10px;} ")
+
+
+
+        # adding a label title to the painel_left_lyt 
 
         self.title_label = QLabel()
         self.title_label.setText("Libary System")
-        self.top_layout.addWidget(self.title_label, alignment=Qt.AlignRight)
+        self.painel_left_lyt.addWidget(self.title_label, alignment=Qt.AlignCenter)
         self.title_label.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Preferred)
         self.title_label.setStyleSheet("""QLabel{ background-color:  rgb(7, 30, 71); color: white; font-weight: bold; font-size: 24px; padding-bottom: 10px;}""")
         self.title_label.setFixedHeight(40)
-        self.title_label.setContentsMargins(450, 0, 0, 0)
-        
-
-        # adding a label icon to log out on the top layout
+       
+        # adding a label icon to log out on the painel_right_lyt
 
         self.logout_label = QToolButton()
         self.logout_label.setIcon(QIcon("imagens/sair.png"))
         self.logout_label.setCursor(Qt.PointingHandCursor)
         self.logout_label.setToolTip("Log Out")
-        self.top_layout.addWidget(self.logout_label, alignment=Qt.AlignRight)
+        self.painel_right_lyt.addWidget(self.logout_label, alignment=Qt.AlignRight)
         self.logout_label.setFixedSize(40, 30)
-        self.logout_label.clicked.connect(self.logout)
-
+        self.logout_label.clicked.connect(self.logout)        
+        
+     
         # adding a QStackedWidget on the main_right_wgt
 
         self.right_painel_stackedwidget = QStackedWidget()
@@ -187,7 +205,7 @@ class MainFrame(QMainWindow):
         self.wgt_settings = Settings()
 
         self.right_painel_stackedwidget.addWidget(self.wgt_home.home_page())
-        self.right_painel_stackedwidget.addWidget(self.wgt_add_books.book_page())
+        self.right_painel_stackedwidget.addWidget(self.wgt_add_books.book_page(self.wgt_home))
         self.right_painel_stackedwidget.addWidget(self.wgt_add_readers.readers_page())
         self.right_painel_stackedwidget.addWidget(self.wgt_add_librarian.libraian_page())
         self.right_painel_stackedwidget.addWidget(self.wgt_manager.manager_page())
