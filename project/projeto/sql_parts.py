@@ -26,7 +26,7 @@ class SqlParts():
         return values
     
     def select_readers(self):
-        cursor.execute("SELECT COUNT(id) FROM clientes")
+        cursor.execute("SELECT COUNT(id) FROM leitores")
         for line in cursor:
             values = line
         return values

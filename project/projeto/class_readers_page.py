@@ -15,9 +15,14 @@ class Reader:
         self.wgt_add_readers = QWidget()
         self.lyt_add_readers = QHBoxLayout(self.wgt_add_readers)
         self.wgt_add_readers.setObjectName("readers")
-        self.wgt_add_readers.setStyleSheet(" #readers {background-color: red; border-radius: 10px; height: 50px; }")
+        self.wgt_add_readers.setStyleSheet(" #readers {background-color: rgb(7, 30, 71); border-radius: 10px; height: 50px; }")
 
         self.lyt_add_readers.addWidget(self.informative_Label("Adding Readers"))
+
+        self.top_wgt = QWidget()
+        self.top_lyt = QHBoxLayout(self.top_wgt)
+        self.wgt_add_readers.setObjectName("top")
+        self.wgt_add_readers.setStyleSheet(" #readers {background-color: rgb(7, 30, 71); border-radius: 10px; height: 50px; }")
 
         return self.wgt_add_readers
         #_________________________________
@@ -33,7 +38,7 @@ class Reader:
         self.shadow(lbl)
         return lbl
     
-    def shadow(self, widget):
+def shadow(self, widget):
         shadow = QGraphicsDropShadowEffect(widget)
         shadow.setBlurRadius(12)
         shadow.setOffset(1, 0)
