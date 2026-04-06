@@ -25,12 +25,6 @@ class SqlParts():
             values = line
         return values
     
-    def select_readers(self):
-        cursor.execute("SELECT COUNT(id) FROM leitores")
-        for line in cursor:
-            values = line
-        return values
-    
 
 class AddBook():
 
@@ -68,3 +62,26 @@ class DeleteBooks():
             print("ERROR IN DELETING BOOKS:", e);return False
         else:
             print("BOOKS DELETED WITH SUCCESS");return True
+        
+class Readers() :
+
+    def __init__(self):
+        pass
+
+    def select_count_readers(self):
+        cursor.execute("SELECT COUNT(id) FROM leitores")
+        for line in cursor:
+            values = line
+        return values
+    
+    def select_readers(self, value) -> None:
+
+        query = (f' select id, nome, email, telefone, nacionality, city, number_identity, library_card_ticket from leitores where nome like "%{value}%"')
+
+        try:
+            cursor.execute(query)
+        except Exception as e:
+            print(f"ERROR EXECUTE QUERY: {e}"); return False
+        else:
+            return cursor.fetchall(); True
+

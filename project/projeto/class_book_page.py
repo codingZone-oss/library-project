@@ -1,15 +1,11 @@
 from time import sleep
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy, QGraphicsDropShadowEffect, QTableView, QToolButton, QLineEdit, QPushButton, QSpinBox, QComboBox
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QIntValidator, QRegularExpressionValidator
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QIntValidator, QRegularExpressionValidator, QColor, QIcon
 from classs_warning_frame import Alert, Successefull
 from PySide6.QtCore import Qt, QRegularExpression
 from class_conextion import cursor
-from PySide6.QtGui import QColor
-from PySide6.QtGui import QIcon
-from sql_parts import AddBook, DeleteBooks, UpdateBooks
+from sql_part import AddBook, DeleteBooks, UpdateBooks
 from datetime import date
-
-
 
 
 class Book(QMainWindow):
@@ -220,16 +216,16 @@ class Book(QMainWindow):
 
         # self.button_lyt.addStretch()
 
-        self.btn_add = self.send_buttons("Add")
+        self.btn_add = self.buttons("Add")
         self.btn_add.clicked.connect(self.addig_books)
 
-        self.btn_clean = self.send_buttons("Clean")
+        self.btn_clean = self.buttons("Clean")
         self.btn_clean.clicked.connect(self.clean_filds)
 
-        self.btn_update = self.send_buttons("Update")
+        self.btn_update = self.buttons("Update")
         self.btn_update.clicked.connect(self.updating_books)
 
-        self.btn_delete = self.send_buttons("Delete")
+        self.btn_delete = self.buttons("Delete")
         self.btn_delete.clicked.connect(self.deleting_books)
 
         self.button_lyt.addWidget(self.btn_clean, alignment=Qt.AlignRight)
@@ -266,9 +262,8 @@ class Book(QMainWindow):
 
         self.book_table = QTableView()
         self.bottom_lyt.addWidget(self.book_table)
-        self.book_table.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.book_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.book_table.setStyleSheet(""" QTableView { background-color: rgb(16, 40, 83); border-radius: 5px; gridline-color: transparent; color: #ffffff; font-size: 13px; } QTableView::item { padding: 6px; } """)
-
 
 
         self.model = QStandardItemModel()
@@ -277,8 +272,8 @@ class Book(QMainWindow):
         self.book_table.setSelectionBehavior(QTableView.SelectRows)
         self.book_table.setSelectionMode(QTableView.SingleSelection)
         self.book_table.clicked.connect(self.row_clicked)
-
         self.model.removeRows(0, self.model.rowCount())
+
 
         # adding all the QWidget on the main_layout1
 
@@ -411,11 +406,11 @@ class Book(QMainWindow):
         if not all(self.datas(True)) or self.datas() == 0:
             self.alert = Alert("Fill All Fields");sleep(0.6);self.alert.show();return
 
-        AddBook().insert(*self.datas(True))
-
-        self.successfull = Successefull("ADDED WITH SUCCESS");sleep(0.6);self.successfull.show();self.clean_filds()
-        self.home.__getstate__(1) 
-
+        if AddBook().insert(*self.datas(True)) == True:
+            self.successfull = Successefull("ADDED WITH SUCCESS");sleep(0.6);self.successfull.show();self.clean_filds()
+            self.home.__getstate__(1) 
+        else:
+            self.alert = Alert("\n       ERROR IN ADDING BOOK \n INFORMATION ALREADY EXIST", Bool=True); sleep(0.6);self.alert.show()
 
     def updating_books(self) -> None:
 
@@ -456,7 +451,7 @@ class Book(QMainWindow):
         else:
             return data["stock"]
 
-    def send_buttons(self, text) -> QPushButton:
+    def buttons(self, text) -> QPushButton:
         self.btn1 = QPushButton(text)
         self.btn1.setCursor(Qt.PointingHandCursor)
         self.btn1.setShortcut("Return")

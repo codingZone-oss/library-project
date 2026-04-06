@@ -181,7 +181,7 @@ class MainFrame(QMainWindow):
 
         self.btn_home = self.building_buttons('Home', "icons/home_32px.png")
         self.btn_book = self.building_buttons('Add Books', "icons/add_book.png")
-        self.btn_reader = self.building_buttons("Add Reades", "icons/leitura.png")
+        self.btn_reader = self.building_buttons("Add Readers", "icons/leitura.png")
         self.btn_librarian = self.building_buttons("Add librarian", "icons/bibliotecario.png")        
         self.btn_manager = self.building_buttons("Manager", "icons/gerente.png")        
         self.btn_settings = self.building_buttons("Settings", "icons/configuracoes.png")        
@@ -219,7 +219,7 @@ class MainFrame(QMainWindow):
         self.btn_librarian.clicked.connect(self.show_librarian)
         self.btn_manager.clicked.connect(self.show_manager)
         self.btn_settings.clicked.connect(self.show_settings)
-
+        
     def shadow(self, widget):
         shadow = QGraphicsDropShadowEffect(widget)
         shadow.setBlurRadius(12)

@@ -1,8 +1,6 @@
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QMainWindow, QLabel, QWidget, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QHBoxLayout, QMainWindow, QLabel, QWidget, QPushButton, QVBoxLayout
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import Qt, QTimer
-from time import sleep
-import sys
 
 class Alert(QMainWindow):
 

@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy, QGraphicsDropShadowEffect
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Qt
-from sql_parts import SqlParts
+from sql_part import Readers, SqlParts
 
 
 class Home:
@@ -54,7 +54,7 @@ class Home:
 
         # adding a the third label on the top layout
         self.label_reader = QLabel()
-        self.label_reader.setText(f"Added Readers \n \n {self.sql.select_readers()[0]}")
+        self.label_reader.setText(f"Added Readers \n \n {Readers().select_count_readers()[0]}")
         self.label_reader.setAlignment(Qt.AlignCenter)
         self.lyt_header.addWidget(self.label_reader)
         self.label_reader.setStyleSheet(" QLabel { background-color: rgb(19, 102, 232); color: white; font-size: 20px; font-weight: bold; border-radius: 40px}")
@@ -125,4 +125,4 @@ class Home:
         elif value == 2:
             return self.label_worker.setText(f"Added Workers \n \n {self.sql.select_workers()[0]}")
         elif value == 3:
-            return self.label_reader.setText(f"Added Readers \n \n {self.sql.select_readers()[0]}")
+            return self.label_reader.setText(f"Added Readers \n \n {self.sql.select_count_readers()[0]}")
