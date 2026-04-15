@@ -229,7 +229,6 @@ class Reader(QMainWindow):
         self.table.setSelectionBehavior(QTableView.SelectRows)
         self.table.setSelectionMode(QTableView.SingleSelection)
         self.table.clicked.connect(self.row_clicked)
-        self.model.removeRows(0, self.model.rowCount())
 
         
     # adding the 5 main_widget on lyt_readers
@@ -243,21 +242,25 @@ class Reader(QMainWindow):
         return self.wgt_readers
 
     def search(self)-> None:
-        self.text = self.txt_search.text()
-        self.cursor = Readers().select_readers(self.text)
-        if self.cursor == False:
-            self.alert = Alert("\n       ERROR EXECUTEING QUERY", Bool=True); sleep(0.6);self.alert.show()
+        self.text = self.txt_search.text().strip()
+        if self.text == "":
+            self.model.removeRows(0, self.model.rowCount())
         else:
-            if not self.cursor:pass
+            self.cursor = Readers().select_readers(self.text)
+            if self.cursor == False:
+                self.alert = Alert("\n       ERROR EXECUTEING QUERY", Bool=True); sleep(0.6);self.alert.show()
             else:
-                for row_data in self.cursor:
-                    row_items = []
-                for value in row_data:
-                    item = QStandardItem(str(value))
-                    item.setEditable(False)
-                    row_items.append(item)
+                if not self.cursor:pass
+                else:
+                    for row_data in self.cursor:
+                        row_items = []
+                    for value in row_data:
+                        print(value)
+                        item = QStandardItem(str(value))
+                        item.setEditable(False)
+                        row_items.append(item)
 
-                self.model.appendRow(row_items)
+                    self.model.appendRow(row_items)
 
     def row_clicked(self) -> None:
         pass
