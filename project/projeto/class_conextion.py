@@ -1,23 +1,23 @@
 import mysql.connector
 
-try:
-    conextion = mysql.connector.connect(
-    host = "localhost",
-    user = "root",
-    password = "",
-    database = "livraria",
-    autocommit = True
-    )
+connection = None
+cursor = None
 
+try:
+    connection = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="livraria",
+        autocommit=True
+    )
 except FileNotFoundError:
     print('Data Base not Found')
-
 except FileExistsError:
-    print(f'Data Base bank_bd not Existis')
-
-except:
-    print('something wrong')
-    
-cursor = conextion.cursor()
-
-# conextion.close()
+    print('Data Base bank_bd not Existis')
+except mysql.connector.Error as e:
+    print(f'Something unexpected happened: {e}')
+except Exception as e:
+    print(f'Unexpected error: {e}')
+else:
+    cursor = connection.cursor()
